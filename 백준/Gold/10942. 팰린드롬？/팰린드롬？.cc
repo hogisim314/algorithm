@@ -23,25 +23,18 @@ int main() {
     for (int i = 1; i <= n - 1; i++) {
         if (arr[i] == arr[i + 1]) {
             pldr[i][i + 1] = 1;
+            q.push(make_pair(i, i + 1));
         }
     }
 
-    // while (!q.empty()) {
-    //     l = q.front().first;
-    //     r = q.front().second;
-    //     q.pop();
-    //     if (pldr[l][r] && l - 1 >= 1 && r + 1 <= n &&
-    //         arr[l - 1] == arr[r + 1]) {
-    //         pldr[l - 1][r + 1] = 1;
-    //         q.push(make_pair(l - 1, r - 1));
-    //     }
-    // }
-
-    for (int l = 2; l <= n - 1; l++) {
-        for (int i = 1; i <= n - l; i++) {
-            if (pldr[i + 1][i + l - 1] == 1 && arr[i] == arr[i + l]) {
-                pldr[i][i + l] = 1;
-            }
+    while (!q.empty()) {
+        l = q.front().first;
+        r = q.front().second;
+        q.pop();
+        if (pldr[l][r] && l - 1 >= 1 && r + 1 <= n &&
+            arr[l - 1] == arr[r + 1]) {
+            pldr[l - 1][r + 1] = 1;
+            q.push(make_pair(l - 1, r + 1));
         }
     }
 
