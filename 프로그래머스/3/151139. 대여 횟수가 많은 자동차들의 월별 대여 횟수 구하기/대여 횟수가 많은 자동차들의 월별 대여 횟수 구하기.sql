@@ -1,0 +1,12 @@
+SELECT MONTH(START_DATE)MONTH,CAR_ID,COUNT(CAR_ID) as RECORDS
+    FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
+    WHERE DATE_FORMAT(START_DATE,'%Y-%m') between '2022-08' and '2022-10'
+    AND CAR_ID in 
+        (SELECT CAR_ID
+        FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
+        where 1=1
+        and DATE_FORMAT(START_DATE,'%Y-%m') between '2022-08' and '2022-10'
+        group by 1
+        having COUNT(CAR_ID)>=5) 
+    GROUP BY 1,2
+    ORDER BY 1,2 desc
