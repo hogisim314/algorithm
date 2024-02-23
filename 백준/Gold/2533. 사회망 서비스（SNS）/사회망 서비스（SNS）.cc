@@ -1,38 +1,38 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 using namespace std;
 int n;
-int vertex1, vertex2;
-vector<int> v[1000100];
-int dp[1000100][2];//0이 ea일때 1이 ea가 아닐때
+int u, v;
+vector<int> nodes[1000100];
 bool visited[1000100];
+int dp[1000100][2];
 
-void DFS(int node) {
-    visited[node] = true;
-    for (int i=0; i<v[node].size(); i++) {
-        int child_node = v[node][i];
-        if (!visited[child_node]) {
-            DFS(child_node);
-            dp[node][0] += min(dp[child_node][0], dp[child_node][1]);
-            dp[node][1] += dp[child_node][0];
-        }
+void DFS(int cur) {
+    visited[cur] = true;
+
+    for (int i = 0; i < nodes[cur].size(); i++) {
+        if (visited[nodes[cur][i]]) continue;
+
+        DFS(nodes[cur][i]);
+        dp[cur][0] += dp[nodes[cur][i]][1];
+        dp[cur][1] += min(dp[nodes[cur][i]][0], dp[nodes[cur][i]][1]);
     }
 }
 
 int main() {
-    cin>>n;
-    for (int i=1; i<=n-1; i++) {
-        cin>>vertex1>>vertex2;
-        v[vertex1].push_back(vertex2);
-        v[vertex2].push_back(vertex1);
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        cin >> u >> v;
+        nodes[u].push_back(v);
+        nodes[v].push_back(u);
     }
 
-    for (int i=1; i<=n; i++) {
-        dp[i][0] = 1;
-        sort(v[i].begin(), v[i].end());
+    for (int i = 1; i <= n; i++) {
+        dp[i][1] = 1;
+        sort(nodes[i].begin(), nodes[i].end());
     }
 
     DFS(1);
-    cout<<min(dp[1][0], dp[1][1]);
+    cout << min(dp[1][0], dp[1][1]);
 }
