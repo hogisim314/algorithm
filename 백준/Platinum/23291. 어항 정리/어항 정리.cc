@@ -216,79 +216,7 @@ void stacking() {
         if (terminate) break;
         initialPos = initialPos2;
     }
-    // cout << initialPos << ' ' << initialPos2 << ' ' << maxHeight << '\n';
 }
-
-// void stacking_example() {
-//     for (int i = 1; i <= N; i++) {
-//         for (int j = 1; j <= N; j++) {
-//             stack[i][j] = 0;
-//         }
-//     }
-
-//     for (int j = 1; j <= N; j++) {
-//         stack[1][j] = fishBowlList[j];
-//     }
-//     int lineHeight = 2;
-//     stack[2][2] = stack[1][1];
-//     stack[1][1] = 0;
-//     print_stacking(1, 1, 2, N);
-//     int initialPos;
-//     bool initFound = false;
-//     for (int j = N; j >= 2; j--) {
-//         int rowIdx = 1;
-//         if (stack[2][j - 1] && !initFound) {
-//             initialPos = j;
-//             initFound = true;
-//         }
-//         vector<int> temp;
-//         while (true) {
-//             if (stack[rowIdx][j] <= 0) {
-//                 break;
-//             }
-//             temp.push_back(stack[rowIdx][j]);
-//             // stack[rowIdx][j] = 0;
-//             rowIdx++;
-//         }
-//         if (temp.size() >= 2) {
-//             for (int k = 0; k < temp.size(); k++) {
-//                 stack[lineHeight][initialPos + k] = temp[k];
-//             }
-//             for (int row = 1; row <= rowIdx; row++) {
-//                 stack[row][j] = 0;
-//             }
-//         }
-//     }
-//     print_stacking(1, 1, 2, N);
-//     lineHeight = 2;
-//     int initialPos2;
-//     initFound = false;
-//     for (int j = N; j >= initialPos; j--) {
-//         int rowIdx = 1;
-//         if (stack[2][j - 1] && !initFound) {
-//             initialPos2 = j;
-//             initFound = true;
-//         }
-//         vector<int> temp;
-//         while (true) {
-//             if (stack[rowIdx][j] <= 0) {
-//                 break;
-//             }
-//             temp.push_back(stack[rowIdx][j]);
-//             rowIdx++;
-//         }
-//         if (temp.size() >= 2) {
-//             for (int k = 0; k < temp.size(); k++) {
-//                 stack[lineHeight][initialPos2 + k] = temp[k];
-//             }
-//             for (int row = 1; row <= rowIdx; row++) {
-//                 stack[row][j] = 0;
-//             }
-//             lineHeight++;
-//         }
-//     }
-//     print_stacking(1, 1, 3, N);
-// }
 
 void plus_one_to_min() {
     vector<int> idx;
@@ -313,15 +241,12 @@ void solution() {
         cnt++;
         plus_one_to_min();
         stacking();
-        // print_stacking(1, 1, 4, N);
         control_fish(initialPos, maxHeight);
         go_flat(initialPos, maxHeight);
         go_half_once();
         go_half_twice();
         control_fish(3 * N / 4 + 1, 4);
         go_flat(3 * N / 4 + 1, 4);
-        // cout << cnt << '\n';
-        // print_fishBowlList();
     }
 }
 
