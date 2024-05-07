@@ -16,6 +16,7 @@ public:
                     }
                 }
                 if (ZeroIdx==-1) {
+                    nonZeroIdx++;
                     continue;
                 }
                 nums[ZeroIdx]=nums[nonZeroIdx];
