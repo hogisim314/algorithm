@@ -1,41 +1,45 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <string.h>
 #include <algorithm>
+#include <iostream>
+#include <queue>
 using namespace std;
-vector<int> adj[1111];
-queue<int> bfs;
-bool visited[1111];
-int main() {//bd fs 
-	ios::sync_with_stdio(false);
-	cin.tie(NULL);
-	int vertex, edge, from, to, start;
-	cin >> vertex >> edge;
-	for (int i = 0; i < edge; i++) {
-		cin >> from >> to;
-		adj[from].push_back(to);
-		adj[to].push_back(from);
-	}
-	for (int i = 1; i <= edge; i++) {
-		sort(adj[i].begin(), adj[i].end());
-	}
-	bfs.push(1);
-	visited[1] = 1;
-	int cnt = 0;
-	while (!bfs.empty()) {
-		int now = bfs.front();
-		bfs.pop();
-		for (int i = 0; i < adj[now].size(); i++) {
-			if (!visited[adj[now][i]]) {
-				bfs.push(adj[now][i]);
-				visited[adj[now][i]] = 1;
-				cnt++;
-			}
-		}
-	}
-	cout << cnt;
+int n, p;
+vector<int> com[111];
+bool visited[111];
 
+void bfs(int num) {
+    queue<int> q;
+    q.push(num);
+    visited[num] = 1;
 
-	return 0;
+    while (!q.empty()) {
+        int top = q.front();
+        q.pop();
+        for (int i = 0; i < com[top].size(); i++) {
+            if (visited[com[top][i]]) continue;
+            visited[com[top][i]] = true;
+
+            q.push(com[top][i]);
+        }
+    }
+
+    return;
+}
+
+int main() {
+    cin >> n >> p;
+    for (int i = 0; i < p; i++) {
+        int a, b;
+        cin >> a >> b;
+        com[a].push_back(b);
+        com[b].push_back(a);
+    }
+
+    bfs(1);
+    int cnt = 0;
+    for (int i = 2; i <= n; i++) {
+        if (visited[i]) {
+            cnt++;
+        }
+    }
+    cout << cnt;
 }
