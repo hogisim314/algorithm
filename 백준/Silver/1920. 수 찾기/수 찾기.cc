@@ -1,38 +1,42 @@
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 using namespace std;
+int N, M;
+int arr[111111];
+int num;
 
-long long arr[111111];
-long long want_find[111111];
-
-long long searching(long long LEFT, long long RIGHT,long long finding) {
-  long long MID = (LEFT+RIGHT)/2;
-  if (arr[MID]==finding) return 1;
-
-  if (arr[LEFT]<=finding&&finding<=arr[MID]) {
-    return searching(LEFT,MID, finding);
-  }
-  else if (arr[MID+1]<=finding&&finding<=arr[RIGHT]) {
-    return searching(MID+1, RIGHT, finding);
-  }
-  return 0;
+bool binary_search(int k) {
+    int lo = 1;
+    int hi = N;
+    while (lo + 1 < hi) {
+        int mid = (lo + hi) / 2;
+        if (arr[mid] == k) {
+            return 1;
+        }
+        if (arr[mid] <= k) {
+            lo = mid;
+        } else if (arr[mid] > k) {
+            hi = mid;
+        }
+    }
+    if (arr[lo] == k || arr[hi] == k) {
+        return 1;
+    } else
+        return 0;
 }
 
 int main() {
-  long long n;
-  cin>>n;
-  for (long long i=0; i<n; ++i) {
-    cin>>arr[i];
-  }
-  sort(arr, arr+n);
-
-  long long m;
-  cin>>m;
-  for (long long i=0; i<m; ++i) {
-    cin>>want_find[i];
-  }
-
-  for (long long i=0; i<m; ++i) {
-    cout<<searching(0, n-1, want_find[i])<<'\n';
-  }
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cin >> N;
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+    }
+    sort(arr + 1, arr + N + 1);
+    cin >> M;
+    for (int i = 1; i <= M; i++) {
+        cin >> num;
+        cout << binary_search(num) << '\n';
+    }
 }
