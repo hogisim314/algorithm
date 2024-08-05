@@ -1,36 +1,46 @@
-#include <algorithm>
-#include <iostream>
+#include<iostream>
+#include<stdio.h>
 using namespace std;
-int n, m;
-int parent[1111111];
-int cmd, a, b;
 
-int Find(int x) {
-    if (x == parent[x]) {
-        return x;
-    }
-    return parent[x] = Find(parent[x]);
+int n, m;
+int parent[1000001];
+
+int find_node(int now) {
+	if (parent[now] == now) {
+		return now;
+	}
+	else {
+		return parent[now] = find_node(parent[now]);
+	}
 }
 
-void Union(int a, int b) { parent[Find(a)] = Find(b); }
+int main()
+{
+	cin >> n >> m;
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cin >> n >> m;
-    for (int i = 0; i <= n; i++) {
-        parent[i] = i;
-    }
-    for (int i = 0; i < m; i++) {
-        cin >> cmd >> a >> b;
-        if (cmd == 0) {  // union
-            Union(a, b);
-        } else if (cmd == 1) {  // find
-            if (Find(a) == Find(b)) {
-                cout << "YES" << '\n';
-            } else {
-                cout << "NO" << '\n';
-            }
-        }
-    }
+	for (int i = 1; i <= n; i++) {
+		parent[i] = i;
+	}
+
+	for (int i = 0; i < m; i++) {
+		int cmd, a, b;
+		scanf("%d %d %d", &cmd, &a, &b);
+
+		if (cmd == 0) {
+			int aRoot = find_node(a);
+			int bRoot = find_node(b);
+			parent[bRoot] = aRoot;
+		}
+
+		if (cmd == 1) {
+			int visited[1000001] = { 0, };
+			if (find_node(b) == find_node(a)) {
+				printf("YES\n");
+			}
+			else {
+				printf("NO\n");
+			}
+		}
+	}
+	return 0;
 }
