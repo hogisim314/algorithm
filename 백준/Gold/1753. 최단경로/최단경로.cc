@@ -1,81 +1,62 @@
+#include <climits>
 #include <iostream>
-#include <algorithm>
+#include <queue>
 #include <vector>
-#include <stdio.h>
 using namespace std;
-struct ss{
-    int d,en;
-};
-vector<ss> v[20001];
-int n,m,s,ans[20001],check[20001];
-struct data{
-    int no,d;
-}d[300100];
-bool cmp(data a, data b)
-{
-    return a.d>b.d;
+
+int V, E;
+int K;
+int u, v, w;
+
+const int INF = INT_MAX;
+
+const int MAX_V = 20'005;
+vector<pair<int, int> > Edges[MAX_V];  // first가 거리
+vector<int> dist(MAX_V, INF);
+priority_queue<pair<int, int> > pq;
+
+void Dijkstra(int start) {
+    int weight, dest;
+    for (int i = 0; i < Edges[start].size(); i++) {
+        dest = Edges[start][i].first;
+        weight = Edges[start][i].second;
+        pq.push(make_pair(-weight, dest));
+    }
+
+    while (!pq.empty()) {
+        weight = -pq.top().first;
+        dest = pq.top().second;
+        pq.pop();
+        if (dist[dest] != INF) continue;
+        dist[dest] = weight;
+        for (int i = 0; i < Edges[dest].size(); i++) {
+            if (dist[Edges[dest][i].first] == INF) {
+                pq.push(make_pair(-(dist[dest] + Edges[dest][i].second),
+                                  Edges[dest][i].first));
+            }
+        }
+    }
 }
-int main()
-{
-    cin>>n>>m;
-    cin>>s;
-    for(int i=1; i<=m; i++)
-    {
-        int st;
-        ss q;
-        scanf("%d %d %d",&st, &q.en, &q.d);
-        v[st].push_back(q);
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> V >> E;
+    cin >> K;
+    for (int i = 1; i <= E; i++) {
+        cin >> u >> v >> w;
+        Edges[u].push_back(make_pair(v, w));
     }
-    for(int i=1; i<=n; i++)
-        ans[i]=1<<30;
-    d[1].d=0;
-    d[1].no=s;
-    ans[s]=0;
-    int cnt=2;
-    while(cnt>1)
-    {
-        int y=0;
-        int va,ed;
-        while(check[d[1].no]==1)
-        {
-            pop_heap(d+1,d+cnt,cmp);
-            cnt--;
-            if(cnt==1)
-            {
-                y=1;
-                break;
-            }
+    dist[K] = 0;
+    Dijkstra(K);
+    for (int i = 1; i <= V; i++) {
+        if (i == K) {
+            cout << 0 << '\n';
+        } else {
+            if (dist[i] == INF) {
+                cout << "INF" << '\n';
+            } else
+                cout << dist[i] << '\n';
         }
-        if(y)
-            break;
-        va=d[1].d;
-        ed=d[1].no;
-        pop_heap(d+1,d+cnt,cmp);
-        cnt--;
-        for(int i=0; i<v[ed].size(); i++)
-        {
-            if(check[v[ed][i].en]==1)
-                continue;
-            else
-            {
-                if(ans[v[ed][i].en]>va+v[ed][i].d)
-                {
-                    ans[v[ed][i].en]=va+v[ed][i].d;
-                    d[cnt].d=va+v[ed][i].d;
-                    d[cnt].no=v[ed][i].en;
-                    cnt++;
-                    push_heap(d+1,d+cnt,cmp);
-                }
-            }
-        }
-        check[ed]=1;
     }
-    for(int i=1; i<=n; i++)
-    {
-        if(ans[i]==1<<30)
-            printf("INF\n");
-        else
-            printf("%d\n",ans[i]);
-    }
-    return 0;
 }
