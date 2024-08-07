@@ -1,43 +1,64 @@
-#include <algorithm>
-#include <iostream>
-#include <vector>
-
+#include<iostream>
+#include<stdio.h>
+#include<vector>
+#include<stack>
+#include<cmath>
+#include<algorithm>
 using namespace std;
+
+typedef struct Data {
+	int idx;
+	int val;
+};
+
 int arr[1000001];
-vector<int> K;
-int Index[1000001];
-int ans[1000001];
-int target;
-int main(void) {
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    int idx = 0;
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; i++) {
-        cin >> arr[i];
-        if (K.empty()) {
-            K.push_back(arr[i]);
-        }
-        if (K[K.size() - 1] < arr[i]) {
-            K.push_back(arr[i]);
-            Index[i] = K.size() - 1;
-        } else {
-            idx = lower_bound(K.begin(), K.end(), arr[i]) - K.begin();
-            K[idx] = arr[i];
-            Index[i] = idx;
-        }
-    }
-    int target = K.size() - 1;
-    for (int i = n; i >= 1; i--) {
-        if (Index[i] == target) {
-            ans[target] = arr[i];
-            target--;
-            if (target == -1) break;
-        }
-    }
-    cout << K.size() << '\n';
-    for (int i = 0; i <= K.size() - 1; i++) {
-        cout << ans[i] << ' ';
-    }
+Data vec[1000001];
+int parent[1000001];
+stack<int> st;
+int n, ans;
+
+int search_position(int st, int ed, int val) {
+	
+	if (st == ed) {
+		return st;
+	}
+	int piv = (st + ed) / 2;
+	if (vec[piv].val < val) return search_position(piv + 1, ed, val);
+	else if (vec[piv].val > val) return search_position(st, piv, val);
+	else return piv;
+}
+
+int main() {
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+		scanf("%d", &arr[i]);
+
+	vec[0] = { 0, -2000000000 };
+
+	for (int i = 1; i <= n; i++) {
+		if (vec[ans].val < arr[i]) {
+			parent[i] = vec[ans].idx;
+			vec[++ans] = { i, arr[i] };
+		}
+		else {
+			int pos = search_position(1, ans, arr[i]);
+			vec[pos] = { i, arr[i] };
+			parent[i] = vec[pos - 1].idx;
+		}
+	}
+
+	cout << ans << endl;
+	int now = vec[ans].idx;
+
+	while (now != 0) {
+		st.push(arr[now]);
+		now = parent[now];
+	}
+
+	while (!st.empty()) {
+		printf("%d ", st.top());
+		st.pop();
+	}
+
+	cout << endl;
 }
