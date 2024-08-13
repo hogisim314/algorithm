@@ -1,66 +1,49 @@
+#include <algorithm>
 #include <iostream>
-#include <string>
+#include <vector>
 using namespace std;
+int arr[10111];
+int idx = 1;
+int n;
 
-int arr[1000011];
-
-struct treeNode {
-	int src;
-	treeNode* left;
-	treeNode* right;
-
-	treeNode() {
-		src = 0;
-		left = NULL;
-		right = NULL;
-	}
-
-	treeNode(int src) {
-		this->src = src;
-		left = NULL;
-		right = NULL;
-	}
-};
-
-void insertNode(treeNode* Node, treeNode* key) {
-	if (key->src < Node->src) {
-		if (Node->left == NULL) {
-			Node->left = key;
-			return;
-		}
-		insertNode(Node->left, key);
-	}
-	else if (Node->src < key->src) {
-		if (Node->right == NULL) {
-			Node->right = key;
-			return;
-		}
-		insertNode(Node->right, key);
-	}
-}
-
-void postOrderTraverse(treeNode* Root) {
-	if (Root->left != NULL) {
-		postOrderTraverse(Root->left);
-	}
-	if (Root->right != NULL) {
-		postOrderTraverse(Root->right);
-	}	
-	cout << Root->src << '\n';
+void solve(int st, int ed) {
+    if (st > ed) return;
+    if (st == ed) {
+        cout << arr[st] << '\n';
+        return;
+    }
+    if (st >= ed) {
+        cout << "error" << '\n';
+        return;
+    }
+    int rightIdx = 0;
+    for (int i = st + 1; i <= ed; i++) {
+        if (arr[i] > arr[st]) {
+            rightIdx = i;
+            break;
+        }
+    }
+    if (rightIdx == 0) {
+        // 큰게 없는거
+        solve(st + 1, ed);
+        cout << arr[st] << '\n';
+        return;
+    }
+    solve(st + 1, rightIdx - 1);
+    solve(rightIdx, ed);
+    cout << arr[st] << '\n';
+    return;
 }
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(0);
-	int a = 0;
-	int num;
-	while (cin>>num) {
-		arr[a++] = num;
-	}
-	treeNode* root = new treeNode(arr[0]);
+    while (cin >> n) {
+        arr[idx++] = n;
+    }
 
-	for (int i = 1; i < a; i++) {
-		insertNode(root, new treeNode(arr[i]));
-	}
-	postOrderTraverse(root);
+    // for (int i = 1; i <= 9; i++) {
+    //     cin >> n;
+    //     arr[i] = n;
+    // }
+
+    solve(1, idx - 1);
 }
