@@ -2,51 +2,60 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-int N, M;
-int parent[50100];
-int level[50100];
-vector<int> nodes[50100];
-bool visited[50100];
-int root = 1;
-int u, v;
+int n, m;
+int a, b;
+int parent[50500];
+int level[50500];
+vector<int> nodes[50500];
+bool visited[50500];
 
-int lca(int v1, int v2) {
-    if (level[v1] < level[v2]) swap(v1, v2);
+int lca(int p, int q) {
+    if (level[p] < level[q]) {
+        swap(p, q);
+    }
 
-    while (level[v1] != level[v2]) {
-        v1 = parent[v1];
+    while (level[p] != level[q]) {
+        p = parent[p];
     }
-    while (v1 != v2) {
-        v1 = parent[v1];
-        v2 = parent[v2];
+
+    while (p != q) {
+        p = parent[p];
+        q = parent[q];
     }
-    return v1;
+    return p;
 }
 
-void make_tree(int node, int depth) {
-    level[node] = depth;
-    visited[node] = true;
-    for (int i = 0; i < nodes[node].size(); i++) {
-        int child = nodes[node][i];
-        if (visited[child]) continue;
-        parent[child] = node;
-        level[child] = depth + 1;
-        make_tree(child, depth + 1);
+void make_tree(int cur, int depth) {
+    level[cur] = depth;
+    visited[cur] = true;
+
+    for (int i = 0; i < nodes[cur].size(); i++) {
+        int temp = nodes[cur][i];
+        if (visited[temp]) continue;
+        parent[temp] = cur;
+        make_tree(temp, depth + 1);
     }
 }
 
 int main() {
-    cin >> N;
-    for (int i = 1; i <= N - 1; i++) {
-        cin >> u >> v;
-        nodes[u].push_back(v);
-        nodes[v].push_back(u);
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        parent[i] = i;
+        level[i] = 1;
     }
+    for (int i = 1; i <= n - 1; i++) {
+        cin >> a >> b;
+        nodes[a].push_back(b);
+        nodes[b].push_back(a);
+    }
+
     make_tree(1, 1);
-    cin >> M;
-    for (int i = 1; i <= M; i++) {
-        cin >> u >> v;
-        cout << lca(u, v) << '\n';
-        ;
+    cin >> m;
+    for (int i = 1; i <= m; i++) {
+        cin >> a >> b;
+        // cout << a << ' ' << b << ' ' << level[a] << ' ' << level[b] << '\n';
+        cout << lca(a, b) << '\n';
     }
 }
