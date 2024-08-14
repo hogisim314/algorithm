@@ -1,103 +1,82 @@
-#include<iostream>
-#include<stdio.h>
-#include<vector>
-#include<queue>
-#include<cmath>
+#include <memory.h>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
 using namespace std;
+#define MAX_LEV 17
+int n, m;
+int a, b;
+int parent[100100][MAX_LEV];
+int level[100100];
+vector<int> nodes[100100];
+bool visited[100100];
+int temp;
 
-int n, m, tree_depth;
-int parent[20][100001];
-int depth[100001];
-vector<int> adj[100001];
-int visited[100001];
-queue<pair<int, int>> q;
+int lca(int p, int q) {  // p가 더 깊다. 즉 level[p]가 더 큰걸로 간주할거임
+    if (level[p] < level[q]) {
+        swap(p, q);
+    }
 
-void cal_depth() {
-
-	while (!q.empty()) {
-		int now = q.front().first;
-		visited[now] = 1;
-		depth[q.front().first] = q.front().second;
-
-		for (int i = 1; i < 19; i++) {
-			if (parent[i - 1][now] == -1) break;
-			parent[i][now] = parent[i - 1][parent[i - 1][now]];
-		}
-
-		for (int i = 0; i < adj[now].size(); i++) {
-			if (visited[adj[now][i]] == 1) continue;
-			parent[0][adj[now][i]] = now;
-			q.push({ adj[now][i], q.front().second + 1 });
-		}
-		q.pop();
-	}
-	return;
+    // 정점 차이 구하자
+    int diff = level[p] - level[q];
+    for (int i = 0; diff != 0; i++) {
+        if (diff % 2) {  // 만약 diff가 9라고 해보자. 1001(2)
+            p = parent[p][i];
+        }
+        diff /= 2;
+    }
+    if (p != q) {
+        for (int i = MAX_LEV - 1; i >= 0; i--) {
+            if (parent[p][i] != -1 && parent[p][i] != parent[q][i]) {
+                p = parent[p][i];
+                q = parent[q][i];
+            }
+        }
+        p = parent[p][0];
+    }
+    return p;
 }
 
-int find_lca(int a, int b) {
-	if (depth[a] > depth[b]) {
-		while (depth[a] != depth[b]) {
-			queue<int> query;
-			int diff = depth[a] - depth[b];
-			int cnt = 0;
-			while (diff > 0) {
-				if (diff % 2 == 1) {
-					a = parent[cnt][a];
-					cnt++;
-				}
-				diff /= 2;
-			}
-		}
-	}
-	else if (depth[a] < depth[b]) {
-		while (depth[a] != depth[b]) {
-			queue<int> query;
-			int diff = depth[b] - depth[a];
-			int cnt = 0;
-			while (diff > 0) {
-				if (diff % 2 == 1) {
-					b = parent[cnt][b];
-					cnt++;
-				}
-				diff /= 2;
-			}
-		}
-	}
+void connection() {
+    for (int k = 1; k < MAX_LEV; k++) {
+        for (int cur = 1; cur <= n; cur++) {
+            parent[cur][k] = parent[parent[cur][k - 1]][k - 1];
+        }
+    }
+    return;
+}
 
-	if (a == b) return a;
-	
-	int cnt = 19;
-	while (cnt>=0) {
-		if (parent[cnt][a] != parent[cnt][b]) {
-			a = parent[cnt][a];
-			b = parent[cnt][b];
-		}
-		cnt--;
-	}
-	
-	return parent[0][a];
+void make_tree(int cur) {
+    for (auto adj : nodes[cur]) {
+        if (level[adj] == -1) {
+            parent[adj][0] = cur;
+            level[adj] = level[cur] + 1;
+            make_tree(adj);
+        }
+    }
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n;
+    memset(parent, -1, sizeof(parent));
+    fill(level, level + n + 1, -1);
+    level[1] = 0;
 
-	scanf("%d", &n);
-	for (int i = 0; i < n - 1; i++) {
-		int a, b;
-		scanf("%d %d", &a, &b);
-		adj[a].push_back(b);
-		adj[b].push_back(a);
-	}
+    for (int i = 1; i <= n - 1; i++) {
+        cin >> a >> b;
+        nodes[a].push_back(b);
+        nodes[b].push_back(a);
+    }
 
-	while (1 << tree_depth < n) tree_depth++;
-
-	scanf("%d",&m);
-	q.push({ 1, 0 });
-	cal_depth();
-
-	for (int i = 0; i < m; i++) {
-		int a, b;
-		scanf("%d %d", &a, &b);
-		printf("%d\n", find_lca(a, b));
-	}
-	return 0;
+    make_tree(1);
+    connection();
+    cin >> m;
+    for (int i = 1; i <= m; i++) {
+        cin >> a >> b;
+        // cout << a << ' ' << b << ' ' << level[a] << ' ' << level[b] << '\n';
+        cout << lca(a, b) << '\n';
+    }
 }
