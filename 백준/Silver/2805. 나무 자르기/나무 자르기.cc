@@ -1,36 +1,46 @@
 #include <algorithm>
 #include <iostream>
 using namespace std;
-int N, M;
-int arr[1111111];
-int lo, hi, mid, ans;
+int n, m;
+int treeHeight[1000100];
+int MAX;
+int MIN = 1e9 + 10;
 
-bool check(int h) {
-    long long sum = 0;
-    for (int i = 1; i <= N; i++) {
-        if (arr[i] < h) continue;
-        sum += (arr[i] - h);
+long long check(int cut) {
+    long long take = 0;
+    for (int i = 1; i <= n; i++) {
+        if (treeHeight[i] <= cut) {
+            continue;
+        }
+        take += treeHeight[i] - cut;
     }
-    if (sum >= M) {
-        ans = max(ans, h);
-        return true;
+    return take;
+}
+
+int parametric_search() {
+    int lo = 0;
+    int hi = MAX + 1;
+
+    while (lo + 1 < hi) {
+        int mid = (lo + hi) / 2;
+        if (check(mid) < (long long)m) {
+            hi = mid;
+        } else {
+            lo = mid;
+        }
     }
-    return false;
+    return lo;
 }
 
 int main() {
-    cin >> N >> M;
-    for (int i = 1; i <= N; i++) {
-        cin >> arr[i];
-        hi = max(hi, arr[i]);
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n >> m;
+
+    for (int i = 1; i <= n; i++) {
+        cin >> treeHeight[i];
+        MAX = max(MAX, treeHeight[i]);
+        MIN = min(MIN, treeHeight[i]);
     }
-    while (lo + 1 < hi) {
-        mid = lo + ((hi - lo) / 2);
-        if (check(mid)) {
-            lo = mid;
-        } else {
-            hi = mid;
-        }
-    }
-    cout << ans;
+    cout << parametric_search();
 }
