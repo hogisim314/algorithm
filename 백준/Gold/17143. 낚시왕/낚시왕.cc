@@ -52,7 +52,6 @@ int main() {
         sharkList[i] = Shark(i, r, c, s, d, z);
         arr[r][c] = i;
     }
-    // print_arr();
     for (int j = 1; j <= C; ++j) {
         // 물고기 잡기
         for (int i = 1; i <= R; ++i) {
@@ -72,8 +71,6 @@ int main() {
             int cc = sharkList[i].c;
             int cd = sharkList[i].d;
             int s = sharkList[i].s;
-            // cout << i << ' ' << cr << ' ' << cc << ' ' << cd << ' ' << s
-            //      << '\n';
             int nr, nc, nd;
             if (cd == 1) {
                 nr = cr - s;
@@ -107,17 +104,14 @@ int main() {
                 nr = cr;
                 nc = cc + s;
                 nd = cd;
-                // cout << "nc " << nc << '\n';
                 while (true) {
                     if (1 <= nc && nc <= C) break;
                     if (nc < 1) {
                         nc = 1 - nc + 1;
                         nd = 3;
-                        // cout << "nc " << nc << '\n';
                     } else if (nc > C) {
                         nc = C - (nc - C);
                         nd = 4;
-                        // cout << "nc " << nc << '\n';
                     }
                 }
             } else if (cd == 4) {
@@ -137,7 +131,6 @@ int main() {
             }
             if (arr[nr][nc] != 0) {
                 int targetIdx = arr[nr][nc];
-                // cout << "targetIdx " << targetIdx << '\n';
                 if (sharkList[targetIdx].z > sharkList[i].z) {
                     sharkList[i].alive = false;
                 } else {
@@ -148,18 +141,12 @@ int main() {
                     arr[nr][nc] = i;
                 }
             } else {
-                // cout << "no shark" << '\n';
                 sharkList[i].r = nr;
                 sharkList[i].c = nc;
                 sharkList[i].d = nd;
                 arr[nr][nc] = i;
-                // print_arr();
             }
-            // cout << i << ' ' << sharkList[i].r << ' ' << sharkList[i].c << '
-            // '
-            //      << sharkList[i].d << ' ' << sharkList[i].s << '\n';
         }
-        // print_arr();
     }
     cout << sum;
 }
