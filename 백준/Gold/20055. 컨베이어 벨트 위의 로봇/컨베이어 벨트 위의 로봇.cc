@@ -1,93 +1,75 @@
 #include <algorithm>
 #include <iostream>
+#include <set>
 #include <vector>
 using namespace std;
-int n, k;
-int naegoodo[222];
-bool belt[222];
+int N, K;
+int A[222];
 int upPos, downPos;
-int step = 1;
+bool belt[222];
+int ans;
 
-void print() {
-    for (int i = 1; i <= 2 * n; i++) {
-        cout << naegoodo[i] << ' ';
+void debug() {
+    cout << upPos << ' ' << downPos << '\n';
+    for (int i = 1; i <= 2 * N; ++i) {
+        cout << A[i] << ' ';
     }
     cout << '\n';
 }
 
-void print1() {
-    for (int i = 1; i <= 2 * n; i++) {
-        cout << belt[i] << ' ';
+bool check_exit() {
+    int zerocnt = 0;
+    for (int i = 1; i <= 2 * N; ++i) {
+        if (A[i] == 0) zerocnt++;
     }
-    cout << '\n';
-}
-
-bool is_finished() {
-    int cnt = 0;
-    for (int i = 1; i <= 2 * n; i++) {
-        if (naegoodo[i] == 0) {
-            cnt++;
-        }
-    }
-    if (cnt >= k) {
+    if (zerocnt >= K) {
         return true;
-    }
-    return false;
+    } else
+        return false;
 }
 
-void move_all() {
-    // 올리는 위치와 내리는 위치 옮겨줌.
-    upPos--;
-    if (upPos == 0) {
-        upPos = 2 * n;
+void place_robot() {
+    if (A[upPos] > 0) {
+        belt[upPos] = true;
+        A[upPos]--;
     }
+}
 
-    downPos--;
-    if (downPos == 0) {
-        downPos = 2 * n;
-    }
-
+void move_robot() {
     if (belt[downPos]) {
         belt[downPos] = false;
     }
 
     int index = downPos - 1;
     if (index == 0) {
-        index = 2 * n;
+        index = 2 * N;
     }
+
     while (true) {
-        // cout << upPos << ' ' << downPos << ' ' << index << '\n';
-        if (belt[index]) {
+        if (belt[index]) {  // 만약 있으면
             int next = index + 1;
-            if (next > 2 * n) {
-                next = 1;
-            }
-            if (belt[next] == false && naegoodo[next] >= 1) {
-                naegoodo[next]--;
+            if (next > 2 * N) next = 1;
+            if (!(belt[next] || A[next] == 0)) {
                 belt[next] = true;
                 if (next == downPos) {
                     belt[next] = false;
                 }
+                A[next]--;
                 belt[index] = false;
             }
         }
-
         index--;
-        if (index == 0) {
-            index = 2 * n;
-        }
+        if (index == 0) index = 2 * N;
         if (index == upPos) {
             if (belt[index]) {
                 int next = index + 1;
-                if (next > 2 * n) {
-                    next = 1;
-                }
-                if (belt[next] == false && naegoodo[next] >= 1) {
-                    naegoodo[next]--;
+                if (index > 2 * N) index = 2 * N;
+                if (!(belt[next] || A[next] == 0)) {
                     belt[next] = true;
                     if (next == downPos) {
                         belt[next] = false;
                     }
+                    A[next]--;
                     belt[index] = false;
                 }
             }
@@ -96,28 +78,34 @@ void move_all() {
     }
 }
 
-void lift() {
-    if (naegoodo[upPos] != 0) {
-        naegoodo[upPos]--;
-        belt[upPos] = true;
-    }
+void move_trailer() {
+    upPos--;
+    downPos--;
+    if (upPos <= 0) upPos = 2 * N;
+    if (downPos <= 0) downPos = 2 * N;
+
+    return;
 }
 
 int main() {
-    cin >> n >> k;
-    upPos = 1;
-    downPos = n;
-    for (int i = 1; i <= 2 * n; i++) {
-        cin >> naegoodo[i];
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> N >> K;
+    for (int i = 1; i <= 2 * N; ++i) {
+        cin >> A[i];
     }
 
+    upPos = 1;
+    downPos = N;
+
     while (true) {
-        move_all();
-        lift();
-        if (is_finished()) {
+        ans++;
+        move_trailer();
+        move_robot();
+        place_robot();
+        if (check_exit()) {
             break;
         }
-        step++;
     }
-    cout << step;
+    cout << ans;
 }
