@@ -10,7 +10,6 @@ int a, b, c;
 int v1, v2;
 vector<pair<int, int> > nodes[888];
 int dist[888];
-bool visited[888];
 int adj, weight;
 int cur;
 int ans1, ans2;
@@ -25,13 +24,11 @@ void debug() {
 void init() {
     for (int i = 1; i <= n; i++) {
         dist[i] = INT_MAX;
-        visited[i] = false;
     }
 }
 
 void Dijkstra(int st) {
     priority_queue<pair<int, int> > pq;
-    visited[st] = true;
     dist[st] = 0;
     for (int i = 0; i < nodes[st].size(); i++) {
         adj = nodes[st][i].first;
@@ -44,12 +41,10 @@ void Dijkstra(int st) {
         cur = pq.top().second;
         pq.pop();
         if (dist[cur] != INT_MAX) continue;
-        visited[cur] = true;
         dist[cur] = weight;
         for (int i = 0; i < nodes[cur].size(); i++) {
             adj = nodes[cur][i].first;
             weight = nodes[cur][i].second;
-            if (visited[adj]) continue;
             if (dist[adj] > dist[cur] + weight) {
                 pq.push(make_pair(-(dist[cur] + weight), adj));
             }
